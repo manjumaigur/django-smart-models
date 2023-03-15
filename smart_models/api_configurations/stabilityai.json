@@ -1,0 +1,11 @@
+{
+    "text2image": {
+      "model": "stable-diffusion-512-v2-1",
+      "type": "image",
+      "steps": 30,
+      "cfg_scale": 6.0,
+      "tasks": {
+        "thumbnail": "Generate a thumbnail for below article: \narticle_placeholder | disfigured, ugly:-1.0, too many fingers:-1.0, text in image: -1.0"
+      }
+    }
+}

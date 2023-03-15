@@ -1,0 +1,54 @@
+{
+  "chat": {
+    "model": "gpt-3.5-turbo",
+    "type": "text",
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "max_tokens": 4096,
+    "tasks": {
+      "spell_correct": {
+        "system": "You are a helpful assistant that corrects spelling mistakes in default_language text.\n",
+        "result_format_rules": "Rules for formatting result:\nRule 1: Remember to return only 'none-no_mistakes' when no mistakes are found\nRule 2: Remember to return result in the following format\n'Text: \nResult: \n'\nRule 3: Remember to not add any extra content other than the actual result\nRule 4: Remember to not add any explanation to the Result",
+        "default_result_key": "none-no_mistakes",
+        "user": "Fix the spelling mistakes in the following text written in default_language:\nText: original_text\nResult: "
+      },
+      "emojify": {
+        "system": "You are a helpful assistant that converts default_language text into emojis.\n",
+        "result_format_rules": "Rules for formatting result:\nRule 1: Remember to return only 'none-no_emojis_found' when the text cannot be converted into emojis\nRule 2: Remember to return result in the following format\nText: \nResult: \n'\nRule 3: Remember to not add any extra content other than the actual result\nRule 4: Remember to not add any explanation to the Result",
+        "default_result_key": "none-no_emojis_found",
+        "user": "Convert the following text written in default_language into emojis:\nText: original_text\nResult: "
+      },
+      "translate": {
+        "system": "You are a helpful assistant that translates language_1 text into language_2 text.\n",
+        "result_format_rules": "Rules for formatting result:\nRule 1: Remember to return only 'none-no_translation_found' when the text cannot be translated\nRule 2: Remember to return result in the following format\nText: \nResult: \n'\nRule 3: Remember to not add any extra content other than the actual result\nRule 4: Remember to not add any explanation to the Result",
+        "default_result_key": "none-no_translation_found",
+        "user": "Convert the following text written in language_1 into language_2:\nText: original_text\nResult: "
+      },
+      "summarize": {
+        "system": "You are a helpful assistant that summarizes default_language text.\n",
+        "result_format_rules": "Rules for formatting result:\nRule 1: Remember to return only 'none-no_summary_found' when the text cannot be summarized\nRule 2: Remember to return result in the following format\nText: \nResult: \n'\nRule 3: Remember to not add any extra content other than the actual result\nRule 4: Remember to not add any explanation to the Result",
+        "default_result_key": "none-no_summary_found",
+        "user": "Summarize the following text written in default_language:\nText: original_text\nResult: "
+      },
+      "generate_title": {
+        "system": "You are a helpful assistant that generates a title given an article in default_language.\n",
+        "result_format_rules": "Rules for formatting result:\nRule 1: Remember to return only 'none-no_title_found' when the title cannot be generated\nRule 2: Remember to return result in the following format\nText: \nResult: \n'\nRule 3: Remember to not add any extra content other than the actual result\nRule 4: Remember to not add any explanation to the Result",
+        "default_result_key": "none-no_title_found",
+        "user": "Generate a title for the article given below in default_language. Note: Length of the title cannot exceed max_title_length characters and should be atleast three characters long:\nText: original_text\nResult: "
+      }
+    }
+  },
+  "audio": {
+    "model": "whisper-1",
+    "type": "audio",
+    "temperature": 0.0,
+    "tasks": {
+      "transcribe": {
+        "output_format": "text"
+      },
+      "translate": {
+        "output_format": "text"
+      }
+    }
+  }
+}
