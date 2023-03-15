@@ -26,7 +26,7 @@ python manage.py migrate
 python manage.py init_smart_models
 ```
 
-4. Get OpenAI and Stability AI API keys
+4. Get [OpenAI](https://platform.openai.com/docs/api-reference/authentication) and [Stability AI](https://platform.stability.ai/docs/getting-started/authentication) API keys
 5. Add API keys to environment variables `OPENAI_API_KEY` and `STABILITYAI_API_KEY`
 6. Copy & paste below code snippet to `settings.py`
 

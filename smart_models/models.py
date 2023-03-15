@@ -1,7 +1,11 @@
+import os
+import tempfile
 import uuid
 from typing import Union
 
-from django.core.files import File
+from django.conf import settings
+from django.core.files import File, storage, uploadedfile
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -165,52 +169,64 @@ class AudioAIModel(BaseAIModelMixin):
         return None
 
     def save(self, *args, **kwargs) -> None:
-        smart_audio_field = self.get_audio_to_text_field()
+        smart_audio_text_field = self.get_audio_to_text_field()
 
         audio_paths = []
+        delete_temp_idx = []
         if (
-            smart_audio_field is not None
-            and len(smart_audio_field.data_fields) != 0
-            and (smart_audio_field)
+            smart_audio_text_field is not None
+            and len(smart_audio_text_field.data_fields) != 0
+            and (smart_audio_text_field)
         ):
-            for data_field in smart_audio_field.data_fields:
+            for i, data_field in enumerate(smart_audio_text_field.data_fields):
                 if not isinstance(data_field, str) and not (
                     isinstance(self._get_field(data_field), models.FileField)
                 ):
                     raise Exception(
                         "Only fields of type models.FileField can be passed to 'data_fields'"
                     )
-                if (
-                    smart_audio_field.path is None
-                    or smart_audio_field.path.strip() == ""
-                ):
-                    # TODO: Get audio field and save it temporarily
-                    raise Exception("No audio file found")
-
-                audio_paths.append(smart_audio_field.path)
+                audio_field = getattr(self, data_field)
+                # TODO: Better way to handle files
+                if isinstance(audio_field.file, uploadedfile.InMemoryUploadedFile):
+                    temp_path = os.path.join(
+                        settings.MEDIA_ROOT,
+                        str(uuid.uuid4()) + os.path.splitext(audio_field.file.name)[-1],
+                    )
+                    storage.default_storage.save(
+                        temp_path, ContentFile(audio_field.file.read())
+                    )
+                    audio_paths.append(temp_path)
+                    delete_temp_idx.append(i)
+                elif isinstance(audio_field.file, uploadedfile.TemporaryUploadedFile):
+                    audio_paths.append(audio_field.file.temporary_file_path())
         else:
             pass
 
         if len(audio_paths) != 0:
             generated_text = None
-            api_provider = smart_audio_field.api_provider
+            api_provider = smart_audio_text_field.api_provider
             for i, audio_path in enumerate(audio_paths):
                 _generated_text = None
-                if smart_audio_field.transcribe:
+                if smart_audio_text_field.transcribe:
                     _generated_text = transcribe_audio(
                         audio_path,
                         api_provider=api_provider,
                     )
-                elif smart_audio_field.translate:
+                elif smart_audio_text_field.translate:
                     _generated_text = translate_audio(
                         audio_path, api_provider=api_provider
                     )
 
                 if _generated_text is not None:
-                    if generated_text is None:
-                        generated_text = f"Audio {i+1}: " + _generated_text
+                    if len(audio_paths) == 1:
+                        generated_text = _generated_text
                     else:
-                        generated_text += f"\nAudio {i+1}: " + _generated_text
+                        if generated_text is None:
+                            generated_text = f"Audio {i+1}: " + _generated_text
+                        else:
+                            generated_text += f"\nAudio {i+1}: " + _generated_text
 
-            self.__dict__[smart_audio_field.attname] = generated_text
+                if i in delete_temp_idx:
+                    os.remove(audio_path)
+            self.__dict__[smart_audio_text_field.attname] = generated_text
         return super().save(*args, **kwargs)
