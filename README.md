@@ -12,10 +12,12 @@ pip install django-smart-models
 
 2. Add "smart_models" to your INSTALLED_APPS setting like this:
 
+```python
    INSTALLED_APPS = [
    ...
    'smart_models',
    ]
+```
 
 3. Run migrations to create smart_models models
 
