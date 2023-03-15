@@ -81,6 +81,14 @@ Refer [demo](https://github.com/manjumaigur/django-smart-models-demo) for sample
     - `transcribe`: `bool`
     - `translate`: `bool`
     - `api_provider`: `models.APIProviders`
+- `APIProviders`
+  - Base class: `models.TextChoices`
+  - Choices:
+    - `OPENAI`
+    - `STABILITYAI`
+    - `GCP`     # API support yet to be added
+    - `AZURE`   # API support yet to be added
+    - `AWS`     # API support yet to be added
 
 #### Models
 
